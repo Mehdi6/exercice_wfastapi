@@ -1,0 +1,51 @@
+définition du problème:
+	problème 1:
+		a) évaluation de la masse des datas générée stocké sur le disque.
+		b) les types de données stocké et leurs nombres
+		c) combien les données pourrait occupé en mémoire si chargée en totalitée.
+	
+	solutions:
+		- généralement le nombre d'émission proposé devrait être entre 300 à 5000 émissions, si on prend une période de temps qui s'étale sur 5 ans par exemple. Mais le nombre d'émission qui sont proposé chaque jour ne devrait pas dépassé 300 émissions. Par conséquent, nous parlons d'un fichier de données output généré chaque jour d'un nombre de ligne de maximum de 300.
+		
+		- les types de données stockés sont les suivant:
+			- Id: texte (un guid de 32 charactère)
+			- Title: texte (un chaine de 100 caractères en moyenne)
+			- Provider: texte (une chaine de 3 caractères)
+			- Views: entier
+			
+		donc une colonne entier et trois colonne texte.
+		
+		- supposons qu'on veut charger les données d'un seul jour en mémoire. On parle d'un fichier de 300 lignes. Ceci devrait occupé une taille relativement petite en mémoire. On sait que toute les valeurs des colonnes seront renseigné pour toute les lignes. 
+		char
+		une ligne occupera : 
+		1 * 32
+		1 * 250
+		1 * 100
+		4 
+		= 386 bytes
+		
+		300 lignes, qui est la taille d'un fichier csv occupera: 115 800 octets ce qui est l'équivalent 113 ko.
+		
+		donc pour un an de génération de données, nous allons avoir une taille dans l'ordre de 40Mo chargé en mémoire.
+		
+		
+	problème 2:
+		- ça prendra quoi comme complexité de processer les datas ?
+			1) trouver les top émissions proposée selon le critère des nombres de vues.
+			2) récupérer toutes la liste des émissions et l'ordonner par ordre alphabétiques
+	
+	solution:
+		1) pour ce genre de problème, nous allons devoir premièrement calculer la moyenne des nombres de vues enregistrée dans tous les temps pour chaque émissions (c'est à dire depuis sa première diffusion), ensuite trier cette liste et sélectionner les 10 première émissions.
+		
+		2) connaissons d'avance que nos émissions sont éparpillé sur les différents fichiers généré journalièrement, nous devons récupérer la liste de toutes les émissions, trier et enlever les dupliqués, ensuite proposer la liste ordonnées par ordre alphabétiques.
+		
+	
+Choix techno:
+	- Tenant compte les problèmes mentionnée si haut, nous avons opté pour des technologies relativement et qui sont efficace, python avec l'outil fastApi qui permet d'implémenter une api rest avec un minimum de code et qui permet des fonctionnalité très intéressante pour des problèmes relativement petits tel que le notre. Nous avons opté pour l'utilisation de la librairie pandas qui est un moteur de manipulation de data csv très puissant surtout pour des données en mémoire qui sont de masse petite.
+	
+	- afin de réduire le temps de réponse, sachant que le calcul et processing des data peut prendre du temps, nous allons opté pour la solution de mise en cache des données calculé, avec un délai d'expiration de 30 minute par exemples, ce qui permettra aux utilisateurs d'avoir accès à des données actualisé tout en ayant un temps de réponse rapide.
+
+	
+Sécurité:
+	il s'agit principalement de lecture, par conséquent il n'y pas beaucoup de risque au niveau de la sécurité. Il faut tout fois faire attention à ce qu'on limite le nombre de requête reçu par utilisateur pour éviter une surcharge sur le serveur.
+	Nous avons utilisé une librairie qui permit d'ajouter une limite sur le nombre de requête qu'un utilisateur peut envoyer au serveur durant une intervalle de temps.
